@@ -77,6 +77,7 @@ export default function ElementPage() {
   const symbol = params.symbol as string;
   const element = ELEMENT_DATA[symbol.toUpperCase()];
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   if (!element) {
     return (
@@ -90,8 +91,24 @@ export default function ElementPage() {
             <ArrowLeft className="w-4 h-4" />
             Go Back
           </button>
-          <div className="text-center">
-            <p className="text-slate-400 text-lg">Element not found</p>
+          <div className="card p-8 text-center">
+            <p className="text-slate-300 text-lg mb-4">
+              Element <span className="font-bold text-purple-400">{symbol.toUpperCase()}</span> details not loaded yet.
+            </p>
+            <p className="text-slate-400 mb-6">
+              The periodic table is still being populated. Please try these elements:
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {['H', 'He', 'Li', 'C', 'N', 'O', 'F', 'Na', 'K', 'Ca', 'Fe', 'Cu', 'Ag', 'Au', 'U'].map((el) => (
+                <button
+                  key={el}
+                  onClick={() => router.push(`/element/${el}`)}
+                  className="px-3 py-1 bg-purple-600/50 hover:bg-purple-600 rounded border border-purple-500/50 text-sm"
+                >
+                  {el}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </main>

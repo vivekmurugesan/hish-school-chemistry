@@ -25,3 +25,13 @@ class UserQuizScore(BaseModel):
     total_questions: int
     percentage: float
     completed_at: datetime = datetime.now()
+
+class QuizHistory(BaseModel):
+    user_id: str
+    session_id: str
+    total_score: int
+    total_questions: int
+    percentage: float
+    questions_answered: int
+    created_at: datetime = datetime.now()
+    updated_at: datetime = datetime.now()

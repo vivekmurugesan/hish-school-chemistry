@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { CheckCircle, XCircle, RotateCcw } from 'lucide-react';
 
@@ -48,6 +48,55 @@ const QUIZ_POOL: QuizQuestion[] = [
     correctAnswer: 2,
     explanation: 'Nitrogen makes up about 78% of Earth\'s atmosphere.',
   },
+  {
+    id: 6,
+    question: 'How many valence electrons does Sodium have?',
+    options: ['1', '2', '7', '11'],
+    correctAnswer: 0,
+    explanation: 'Sodium (Na) has 1 valence electron, making it highly reactive.',
+  },
+  {
+    id: 7,
+    question: 'What is the chemical formula for table salt?',
+    options: ['KCl', 'NaCl', 'CaCl₂', 'MgCl₂'],
+    correctAnswer: 1,
+    explanation: 'Table salt is sodium chloride (NaCl).',
+  },
+  {
+    id: 8,
+    question: 'Which gas do plants use for photosynthesis?',
+    options: ['Nitrogen', 'Oxygen', 'Carbon Dioxide', 'Hydrogen'],
+    correctAnswer: 2,
+    explanation: 'Plants use carbon dioxide (CO₂) from the air during photosynthesis.',
+  },
+  {
+    id: 9,
+    question: 'What is the most common form of carbon in nature?',
+    options: ['Diamond', 'Graphite', 'Coal', 'Charcoal'],
+    correctAnswer: 1,
+    explanation: 'Graphite is the most common and stable form of carbon found in nature.',
+  },
+  {
+    id: 10,
+    question: 'Which element is essential for blood clotting?',
+    options: ['Iron', 'Calcium', 'Phosphorus', 'Potassium'],
+    correctAnswer: 1,
+    explanation: 'Calcium is crucial for blood coagulation and bone health.',
+  },
+  {
+    id: 11,
+    question: 'What is the atomic mass of Hydrogen?',
+    options: ['0.5', '1.008', '2.016', '4.003'],
+    correctAnswer: 1,
+    explanation: 'Hydrogen has an atomic mass of approximately 1.008 amu.',
+  },
+  {
+    id: 12,
+    question: 'Which element is a noble gas?',
+    options: ['Chlorine', 'Fluorine', 'Neon', 'Bromine'],
+    correctAnswer: 2,
+    explanation: 'Neon (Ne) is a noble gas with a full outer electron shell.',
+  },
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -71,6 +120,41 @@ export default function QuizPage() {
   const [answered, setAnswered] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [quizComplete, setQuizComplete] = useState(false);
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+
+  useEffect(() => {
+    if (quizComplete) {
+      saveQuizHistory();
+    }
+  }, [quizComplete]);
+
+  const saveQuizHistory = async () => {
+    try {
+      const userId = localStorage.getItem('userId') || 'default_user';
+      const percentage = Math.round((score / quiz.length) * 100);
+
+      const response = await fetch('http://localhost:8000/api/quiz/history/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          session_id: sessionId,
+          total_score: score,
+          total_questions: quiz.length,
+          percentage: percentage,
+          questions_answered: quiz.length,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to save quiz history');
+      }
+    } catch (error) {
+      console.error('Error saving quiz history:', error);
+    }
+  };
 
   const question = quiz[currentQuestion];
 

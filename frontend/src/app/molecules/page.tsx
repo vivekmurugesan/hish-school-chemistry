@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Navigation } from '@/components/Navigation';
 import { Search } from 'lucide-react';
 
@@ -77,9 +78,11 @@ export default function MoleculesPage() {
                 </div>
               </div>
 
-              <button className="w-full btn-primary text-center">
-                View in 3D
-              </button>
+              <Link href={`/molecules/${molecule.id}`} className="block">
+                <button className="w-full btn-primary text-center">
+                  View Details & 3D
+                </button>
+              </Link>
             </div>
           ))}
         </div>
