@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
+import { MoleculeViewer3D } from '@/components/MoleculeViewer3D';
 import { ArrowLeft } from 'lucide-react';
 
 const SAMPLE_MOLECULES: Record<string, any> = {
@@ -214,14 +215,14 @@ export default function MoleculeDetailPage() {
               </div>
             </div>
 
-            {/* 3D Model Placeholder */}
+            {/* 3D Model */}
             <div className="card p-6">
               <h3 className="font-semibold mb-4">3D Structure</h3>
-              <div className="w-full aspect-square relative bg-slate-700/30 rounded-lg flex items-center justify-center">
-                <div className="text-sm text-slate-400 text-center">
-                  3D visualization coming soon
-                </div>
-              </div>
+              <MoleculeViewer3D
+                formula={molecule.formula}
+                atoms={molecule.atoms}
+                structure={molecule.structure}
+              />
             </div>
           </div>
         </div>
