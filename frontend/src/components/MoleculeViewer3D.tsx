@@ -182,7 +182,7 @@ const MoleculeScene = ({ formula, atoms }: { formula: string; atoms: string[] })
   );
 };
 
-export function MoleculeViewer3D({ formula, atoms, structure }: MoleculeViewer3DProps) {
+export function MoleculeViewer3D({ formula, atoms }: MoleculeViewer3DProps) {
   return (
     <div className="w-full aspect-square rounded-lg overflow-hidden bg-slate-900 border border-slate-700">
       <Canvas>
