@@ -112,7 +112,7 @@ export default function QuizPage() {
 
             <div className="card p-12 mb-8">
               <div className="text-6xl font-bold mb-4">
-                {Math.round((score / SAMPLE_QUIZ.length) * 100)}%
+                {Math.round((score / quiz.length) * 100)}%
               </div>
               <p className="text-2xl mb-4">
                 You scored {score} out of {quiz.length}
