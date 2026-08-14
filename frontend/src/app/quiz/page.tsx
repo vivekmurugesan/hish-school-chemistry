@@ -110,7 +110,7 @@ function shuffleArray<T>(array: T[]): T[] {
 
 function getQuizQuestions(): QuizQuestion[] {
   const shuffled = shuffleArray(QUIZ_POOL);
-  return shuffled.slice(0, 3);
+  return shuffled.slice(0, Math.min(10, shuffled.length));
 }
 
 export default function QuizPage() {

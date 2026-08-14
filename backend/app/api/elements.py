@@ -94,6 +94,30 @@ async def get_all_elements(db: AsyncDatabase = Depends(get_database)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get('/generate/{symbol}', response_model=ElementResponse)
+async def generate_element_details(symbol: str, db: AsyncDatabase = Depends(get_database)):
+    """Generate element details using Gemini AI for any periodic table element."""
+    try:
+        collection = db['elements']
+        existing = await collection.find_one({'symbol': symbol.upper()})
+
+        if existing:
+            return ElementResponse(
+                id=str(existing['_id']),
+                **{k: v for k, v in existing.items() if k != '_id'},
+            )
+
+        element_data = await gemini_service.generate_element_details(symbol)
+        result = await collection.insert_one(element_data)
+
+        created_element = await collection.find_one({'_id': result.inserted_id})
+        return ElementResponse(
+            id=str(created_element['_id']),
+            **{k: v for k, v in created_element.items() if k != '_id'},
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Failed to generate element details: {str(e)}')
+
 @router.get('/{symbol}', response_model=ElementResponse)
 async def get_element(symbol: str, db: AsyncDatabase = Depends(get_database)):
     """Get a specific element by its symbol."""
@@ -127,27 +151,3 @@ async def create_element(element: Element, db: AsyncDatabase = Depends(get_datab
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@router.get('/generate/{symbol}', response_model=ElementResponse)
-async def generate_element_details(symbol: str, db: AsyncDatabase = Depends(get_database)):
-    """Generate element details using Gemini AI for any periodic table element."""
-    try:
-        collection = db['elements']
-        existing = await collection.find_one({'symbol': symbol.upper()})
-
-        if existing:
-            return ElementResponse(
-                id=str(existing['_id']),
-                **{k: v for k, v in existing.items() if k != '_id'},
-            )
-
-        element_data = await gemini_service.generate_element_details(symbol)
-        result = await collection.insert_one(element_data)
-
-        created_element = await collection.find_one({'_id': result.inserted_id})
-        return ElementResponse(
-            id=str(created_element['_id']),
-            **{k: v for k, v in created_element.items() if k != '_id'},
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f'Failed to generate element details: {str(e)}')
