@@ -47,13 +47,13 @@ export function PeriodicTable() {
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="w-full overflow-x-auto pb-8">
       <div
-        className="inline-block gap-2 p-4"
+        className="inline-grid gap-1 p-4 min-w-full"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(18, minmax(60px, 1fr))',
-          gridAutoRows: 'minmax(60px, auto)',
+          gridTemplateColumns: 'repeat(18, 70px)',
+          gridAutoRows: '70px',
           gridAutoFlow: 'dense',
         }}
       >

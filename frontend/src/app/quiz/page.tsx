@@ -12,7 +12,7 @@ interface QuizQuestion {
   explanation: string;
 }
 
-const SAMPLE_QUIZ: QuizQuestion[] = [
+const QUIZ_POOL: QuizQuestion[] = [
   {
     id: 1,
     question: 'What is the atomic number of Carbon?',
@@ -34,16 +34,45 @@ const SAMPLE_QUIZ: QuizQuestion[] = [
     correctAnswer: 1,
     explanation: 'Water has covalent bonds between hydrogen and oxygen atoms.',
   },
+  {
+    id: 4,
+    question: 'Which element has the symbol Au?',
+    options: ['Silver', 'Gold', 'Aluminum', 'Argon'],
+    correctAnswer: 1,
+    explanation: 'Au is the chemical symbol for Gold.',
+  },
+  {
+    id: 5,
+    question: 'What is the most abundant element in Earth\'s atmosphere?',
+    options: ['Oxygen', 'Hydrogen', 'Nitrogen', 'Argon'],
+    correctAnswer: 2,
+    explanation: 'Nitrogen makes up about 78% of Earth\'s atmosphere.',
+  },
 ];
 
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function getQuizQuestions(): QuizQuestion[] {
+  const shuffled = shuffleArray(QUIZ_POOL);
+  return shuffled.slice(0, 3);
+}
+
 export default function QuizPage() {
+  const [quiz, setQuiz] = useState<QuizQuestion[]>(() => getQuizQuestions());
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [quizComplete, setQuizComplete] = useState(false);
 
-  const question = SAMPLE_QUIZ[currentQuestion];
+  const question = quiz[currentQuestion];
 
   const handleAnswer = (optionIndex: number) => {
     setSelectedAnswer(optionIndex);
@@ -55,7 +84,7 @@ export default function QuizPage() {
   };
 
   const handleNext = () => {
-    if (currentQuestion < SAMPLE_QUIZ.length - 1) {
+    if (currentQuestion < quiz.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setAnswered(false);
       setSelectedAnswer(null);
@@ -65,6 +94,7 @@ export default function QuizPage() {
   };
 
   const handleRestart = () => {
+    setQuiz(getQuizQuestions());
     setCurrentQuestion(0);
     setScore(0);
     setAnswered(false);
@@ -85,12 +115,12 @@ export default function QuizPage() {
                 {Math.round((score / SAMPLE_QUIZ.length) * 100)}%
               </div>
               <p className="text-2xl mb-4">
-                You scored {score} out of {SAMPLE_QUIZ.length}
+                You scored {score} out of {quiz.length}
               </p>
               <div className="h-2 bg-slate-700 rounded-full mb-6 overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-green-500 to-blue-500 transition-all"
-                  style={{ width: `${(score / SAMPLE_QUIZ.length) * 100}%` }}
+                  style={{ width: `${(score / quiz.length) * 100}%` }}
                 />
               </div>
             </div>
@@ -118,7 +148,7 @@ export default function QuizPage() {
           <div className="mb-8">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-slate-400">
-                Question {currentQuestion + 1} of {SAMPLE_QUIZ.length}
+                Question {currentQuestion + 1} of {quiz.length}
               </span>
               <span className="text-sm font-semibold">{score} correct</span>
             </div>
@@ -126,7 +156,7 @@ export default function QuizPage() {
               <div
                 className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all"
                 style={{
-                  width: `${((currentQuestion + 1) / SAMPLE_QUIZ.length) * 100}%`,
+                  width: `${((currentQuestion + 1) / quiz.length) * 100}%`,
                 }}
               />
             </div>
@@ -178,7 +208,7 @@ export default function QuizPage() {
           {/* Next Button */}
           {answered && (
             <button onClick={handleNext} className="btn-primary w-full">
-              {currentQuestion === SAMPLE_QUIZ.length - 1 ? 'See Results' : 'Next Question'}
+              {currentQuestion === quiz.length - 1 ? 'See Results' : 'Next Question'}
             </button>
           )}
         </div>

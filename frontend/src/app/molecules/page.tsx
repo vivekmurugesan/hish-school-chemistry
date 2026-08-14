@@ -5,54 +5,16 @@ import { Navigation } from '@/components/Navigation';
 import { Search } from 'lucide-react';
 
 const SAMPLE_MOLECULES = [
-  {
-    id: 1,
-    name: 'Water',
-    formula: 'H₂O',
-    description: 'A polar molecule essential for all known forms of life',
-    atoms: 'Hydrogen, Oxygen',
-    polarity: 'Polar',
-  },
-  {
-    id: 2,
-    name: 'Methane',
-    formula: 'CH₄',
-    description: 'A simple hydrocarbon gas used as fuel',
-    atoms: 'Carbon, Hydrogen',
-    polarity: 'Nonpolar',
-  },
-  {
-    id: 3,
-    name: 'Carbon Dioxide',
-    formula: 'CO₂',
-    description: 'A greenhouse gas produced by burning fossil fuels',
-    atoms: 'Carbon, Oxygen',
-    polarity: 'Nonpolar',
-  },
-  {
-    id: 4,
-    name: 'Sodium Chloride',
-    formula: 'NaCl',
-    description: 'Common table salt, an ionic compound',
-    atoms: 'Sodium, Chlorine',
-    polarity: 'Ionic',
-  },
-  {
-    id: 5,
-    name: 'Glucose',
-    formula: 'C₆H₁₂O₆',
-    description: 'A simple sugar produced during photosynthesis',
-    atoms: 'Carbon, Hydrogen, Oxygen',
-    polarity: 'Polar',
-  },
-  {
-    id: 6,
-    name: 'Oxygen',
-    formula: 'O₂',
-    description: 'Diatomic molecule essential for respiration',
-    atoms: 'Oxygen',
-    polarity: 'Nonpolar',
-  },
+  { id: 1, name: 'Water', formula: 'H₂O', description: 'Essential for all life forms', atoms: 'H, O', polarity: 'Polar', uses: 'Solvent, coolant, life' },
+  { id: 2, name: 'Methane', formula: 'CH₄', description: 'Simple hydrocarbon', atoms: 'C, H', polarity: 'Nonpolar', uses: 'Fuel, energy' },
+  { id: 3, name: 'Carbon Dioxide', formula: 'CO₂', description: 'Greenhouse gas', atoms: 'C, O', polarity: 'Nonpolar', uses: 'Photosynthesis, drinks' },
+  { id: 4, name: 'Sodium Chloride', formula: 'NaCl', description: 'Table salt', atoms: 'Na, Cl', polarity: 'Ionic', uses: 'Seasoning, preservative' },
+  { id: 5, name: 'Glucose', formula: 'C₆H₁₂O₆', description: 'Simple sugar', atoms: 'C, H, O', polarity: 'Polar', uses: 'Energy, sweetener' },
+  { id: 6, name: 'Oxygen', formula: 'O₂', description: 'Diatomic gas', atoms: 'O', polarity: 'Nonpolar', uses: 'Respiration, combustion' },
+  { id: 7, name: 'Ammonia', formula: 'NH₃', description: 'Nitrogen compound', atoms: 'N, H', polarity: 'Polar', uses: 'Fertilizer, cleaner' },
+  { id: 8, name: 'Ethanol', formula: 'C₂H₅OH', description: 'Alcohol', atoms: 'C, H, O', polarity: 'Polar', uses: 'Fuel, solvent' },
+  { id: 9, name: 'Sulfuric Acid', formula: 'H₂SO₄', description: 'Strong acid', atoms: 'H, S, O', polarity: 'Polar', uses: 'Industrial, batteries' },
+  { id: 10, name: 'Hydrogen', formula: 'H₂', description: 'Diatomic gas', atoms: 'H', polarity: 'Nonpolar', uses: 'Fuel, rockets' },
 ];
 
 export default function MoleculesPage() {

@@ -188,11 +188,40 @@ export default function ElementPage() {
             {/* Bohr Model */}
             <div className="card p-6">
               <h3 className="font-semibold mb-4">Bohr Model</h3>
-              <div className="w-full aspect-square relative bg-slate-700/30 rounded-lg flex items-center justify-center">
-                <div className="text-sm text-slate-400 text-center">
-                  3D visualization coming soon
-                </div>
-              </div>
+              <svg viewBox="0 0 200 200" className="w-full aspect-square">
+                {/* Nucleus */}
+                <circle cx="100" cy="100" r="12" fill="#EC4899" />
+                <text x="100" y="105" textAnchor="middle" fontSize="10" fill="white" className="font-bold">
+                  {element.atomicNumber}
+                </text>
+
+                {/* Electron orbitals */}
+                <circle cx="100" cy="100" r="40" fill="none" stroke="#8B5CF6" strokeWidth="1" opacity="0.5" />
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#3B82F6" strokeWidth="1" opacity="0.5" />
+                <circle cx="100" cy="100" r="95" fill="none" stroke="#06B6D4" strokeWidth="1" opacity="0.5" />
+
+                {/* Electrons on first shell (max 2) */}
+                {element.atomicNumber >= 1 && (
+                  <circle cx="140" cy="100" r="5" fill="#3B82F6" />
+                )}
+                {element.atomicNumber >= 2 && (
+                  <circle cx="60" cy="100" r="5" fill="#3B82F6" />
+                )}
+
+                {/* Electrons on second shell (max 8) */}
+                {element.atomicNumber >= 3 && Array.from({ length: Math.min(element.atomicNumber - 2, 8) }).map((_, i) => (
+                  <circle
+                    key={`e2-${i}`}
+                    cx={100 + 70 * Math.cos((i / 8) * Math.PI * 2)}
+                    cy={100 + 70 * Math.sin((i / 8) * Math.PI * 2)}
+                    r="4"
+                    fill="#06B6D4"
+                  />
+                ))}
+              </svg>
+              <p className="text-xs text-slate-400 mt-2 text-center">
+                {element.electronConfiguration}
+              </p>
             </div>
 
             {/* Reacts With */}
