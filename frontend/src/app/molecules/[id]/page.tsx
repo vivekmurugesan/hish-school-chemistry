@@ -1,112 +1,98 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
 import { ArrowLeft } from 'lucide-react';
 
-const MOLECULE_DETAILS: Record<string, any> = {
-  '1': {
-    id: 1,
-    name: 'Water',
-    formula: 'H₂O',
-    description: 'Essential for all known forms of life',
-    atoms: ['Hydrogen', 'Oxygen'],
-    structure: 'Bent molecular geometry',
-    polarity: 'Polar',
-    bondType: 'Covalent',
-    molecularWeight: '18.015 g/mol',
-    uses: ['Solvent', 'Coolant', 'Life essence', 'Universal solvent'],
-    properties: [
-      'Boiling Point: 100°C',
-      'Melting Point: 0°C',
-      'Density: 1 g/cm³',
-      'pH: 7 (neutral)',
-    ],
-    equation: '2H₂ + O₂ → 2H₂O',
-    facts: [
-      'Water covers about 71% of Earth\'s surface',
-      'The human body is about 60% water',
-      'Water is the only substance that exists in all three states at Earth temperatures',
-    ],
-  },
-  '2': {
-    id: 2,
-    name: 'Methane',
-    formula: 'CH₄',
-    description: 'Simple hydrocarbon',
-    atoms: ['Carbon', 'Hydrogen'],
-    structure: 'Tetrahedral',
-    polarity: 'Nonpolar',
-    bondType: 'Covalent',
-    molecularWeight: '16.043 g/mol',
-    uses: ['Fuel', 'Energy', 'Chemical feedstock'],
-    properties: [
-      'Boiling Point: -161.5°C',
-      'Melting Point: -182.5°C',
-      'Gas at room temperature',
-    ],
-    equation: 'CH₄ + 2O₂ → CO₂ + 2H₂O',
-    facts: [
-      'Methane is the primary component of natural gas',
-      'It\'s 25 times more potent than CO₂ as a greenhouse gas',
-      'Produced in wetlands, ruminant stomachs, and landfills',
-    ],
-  },
-  '3': {
-    id: 3,
-    name: 'Carbon Dioxide',
-    formula: 'CO₂',
-    description: 'Greenhouse gas',
-    atoms: ['Carbon', 'Oxygen'],
-    structure: 'Linear molecular geometry',
-    polarity: 'Nonpolar',
-    bondType: 'Covalent',
-    molecularWeight: '44.009 g/mol',
-    uses: ['Photosynthesis', 'Beverages', 'Industrial'],
-    properties: [
-      'Sublimes at -78.5°C',
-      'Gas at room temperature',
-      'Odorless and colorless',
-    ],
-    equation: '2C + O₂ → 2CO',
-    facts: [
-      'Plants convert CO₂ into oxygen during photosynthesis',
-      'Used in fire extinguishers',
-      'Dry ice is solid CO₂',
-    ],
-  },
-  '4': {
-    id: 4,
-    name: 'Sodium Chloride',
-    formula: 'NaCl',
-    description: 'Table salt',
-    atoms: ['Sodium', 'Chlorine'],
-    structure: 'Cubic crystal lattice',
-    polarity: 'Ionic',
-    bondType: 'Ionic',
-    molecularWeight: '58.443 g/mol',
-    uses: ['Seasoning', 'Preservative', 'Chemical industry'],
-    properties: [
-      'Boiling Point: 1465°C',
-      'Melting Point: 801°C',
-      'Soluble in water',
-    ],
-    equation: 'Na + Cl₂ → 2NaCl',
-    facts: [
-      'Salt is essential for human health and body functions',
-      'Ancient civilizations traded salt as currency',
-      'The Dead Sea has exceptionally high salt concentration',
-    ],
-  },
+const SAMPLE_MOLECULES: Record<string, any> = {
+  '1': { name: 'Water' },
+  '2': { name: 'Methane' },
+  '3': { name: 'Carbon Dioxide' },
+  '4': { name: 'Sodium Chloride' },
+  '5': { name: 'Glucose' },
+  '6': { name: 'Oxygen' },
+  '7': { name: 'Ammonia' },
+  '8': { name: 'Ethanol' },
+  '9': { name: 'Sulfuric Acid' },
+  '10': { name: 'Hydrogen' },
 };
 
 export default function MoleculeDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const molecule = MOLECULE_DETAILS[id];
+  const [molecule, setMolecule] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!molecule) {
+  useEffect(() => {
+    fetchMoleculeDetails();
+  }, [id]);
+
+  const fetchMoleculeDetails = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const moleculeName = SAMPLE_MOLECULES[id]?.name;
+      if (!moleculeName) {
+        setError('Molecule not found');
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(`http://localhost:8000/api/molecules/generate/${moleculeName}`);
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.detail || 'Failed to load molecule details');
+        setLoading(false);
+        return;
+      }
+
+      const moleculeData = await response.json();
+      const normalizedMolecule = normalizeMoleculeData(moleculeData);
+      setMolecule(normalizedMolecule);
+    } catch (err) {
+      console.error('Error fetching molecule:', err);
+      setError('Failed to load molecule details');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const normalizeMoleculeData = (data: any) => {
+    return {
+      name: data.name,
+      formula: data.formula,
+      description: data.description,
+      atoms: data.atoms,
+      structure: data.structure,
+      polarity: data.polarity,
+      bondType: data.bond_type,
+      molecularWeight: data.molecular_weight,
+      uses: data.uses,
+      properties: data.properties,
+      equation: data.equation,
+      facts: data.interesting_facts,
+    };
+  };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen">
+        <Navigation />
+        <div className="container mx-auto px-4 py-20">
+          <div className="text-center">
+            <p className="text-slate-400">Loading molecule details...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error || !molecule) {
     return (
       <main className="min-h-screen">
         <Navigation />
@@ -119,7 +105,7 @@ export default function MoleculeDetailPage() {
             Go Back
           </button>
           <div className="text-center">
-            <p className="text-slate-400 text-lg">Molecule not found</p>
+            <p className="text-slate-400 text-lg">{error || 'Molecule not found'}</p>
           </div>
         </div>
       </main>

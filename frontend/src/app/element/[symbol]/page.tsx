@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Atom, Zap, AlertCircle } from 'lucide-react';
@@ -75,11 +76,77 @@ const ELEMENT_DATA: Record<string, any> = {
 export default function ElementPage() {
   const params = useParams();
   const symbol = params.symbol as string;
-  const element = ELEMENT_DATA[symbol.toUpperCase()];
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [element, setElement] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!element) {
+  useEffect(() => {
+    fetchElementDetails();
+  }, [symbol]);
+
+  const fetchElementDetails = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(`http://localhost:8000/api/elements/generate/${symbol}`);
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.detail || 'Element not found');
+        return;
+      }
+
+      const elementData = await response.json();
+      const normalizedElement = normalizeElementData(elementData);
+      setElement(normalizedElement);
+    } catch (err) {
+      console.error('Error fetching element:', err);
+      const fallbackElement = ELEMENT_DATA[symbol.toUpperCase()];
+      if (fallbackElement) {
+        setElement(fallbackElement);
+      } else {
+        setError('Failed to load element details. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const normalizeElementData = (data: any) => {
+    return {
+      atomicNumber: data.atomic_number,
+      symbol: data.symbol,
+      name: data.name,
+      atomicMass: data.atomic_mass,
+      category: data.category,
+      electronegativity: data.electronegativity,
+      boilingPoint: data.boiling_point,
+      meltingPoint: data.melting_point,
+      density: data.density,
+      electronConfiguration: data.electron_configuration,
+      valenceElectrons: data.valence_electrons,
+      description: data.description,
+      interactsWith: data.reacts_with,
+      facts: data.interesting_facts,
+    };
+  };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen">
+        <Navigation />
+        <div className="container mx-auto px-4 py-20">
+          <div className="text-center">
+            <p className="text-slate-400">Loading element details...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error || !element) {
     return (
       <main className="min-h-screen">
         <Navigation />
@@ -93,10 +160,10 @@ export default function ElementPage() {
           </button>
           <div className="card p-8 text-center">
             <p className="text-slate-300 text-lg mb-4">
-              Element <span className="font-bold text-purple-400">{symbol.toUpperCase()}</span> details not loaded yet.
+              {error || `Element ${symbol.toUpperCase()} not found.`}
             </p>
             <p className="text-slate-400 mb-6">
-              The periodic table is still being populated. Please try these elements:
+              Please try one of these elements or search the periodic table:
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               {['H', 'He', 'Li', 'C', 'N', 'O', 'F', 'Na', 'K', 'Ca', 'Fe', 'Cu', 'Ag', 'Au', 'U'].map((el) => (
