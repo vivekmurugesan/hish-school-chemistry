@@ -4,10 +4,11 @@ from app.database import get_database
 from app.models.note import Note, NoteResponse, NoteCreate
 from bson import ObjectId
 from datetime import datetime
+from typing import List
 
 router = APIRouter(prefix='/api/notes', tags=['notes'])
 
-@router.get('/{user_id}', response_model=list[NoteResponse])
+@router.get('/{user_id}', response_model=List[NoteResponse])
 async def get_user_notes(
     user_id: str,
     db: AsyncDatabase = Depends(get_database),

@@ -28,7 +28,6 @@ export default function NotesPage() {
   ]);
 
   const [newNote, setNewNote] = useState({ title: '', content: '' });
-  const [editingId, setEditingId] = useState<number | null>(null);
 
   const addNote = () => {
     if (newNote.title && newNote.content) {
